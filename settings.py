@@ -1,0 +1,3 @@
+SCREEN_SIZE = (1280, 720)
+
+RED_BLOCK = (255, 0, 0)
