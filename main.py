@@ -1,3 +1,4 @@
+import os
 import pygame
 from settings import * 
 from character import Character
@@ -19,13 +20,20 @@ def scale_img(image, scale):
     h = image.get_height()
     return pygame.transform.scale(image, (w * scale, h * scale))
 
-animation_list = []
-for i in range(2):
-    img = pygame.image.load(f"./assets/images/characters/frog_soldier/idle/{i}.png").convert_alpha()
-    img = scale_img(img, SCALE)
-    animation_list.append(img)
+character_animations = {}
 
-player = Character(100, 100, animation_list)
+for character in os.listdir(PATH):
+    animation_list = []
+    for type in os.listdir(f"{PATH}/{character}"):
+        temp_list = []
+        for img in os.listdir(f"{PATH}/{character}/{type}"):
+            img = pygame.image.load(f"{PATH}/{character}/{type}/{img}").convert_alpha()
+            img = scale_img(img, SCALE)
+            temp_list.append(img)
+        animation_list.append(temp_list)
+    character_animations[character] = animation_list
+
+player = Character(100, 100, character_animations["frog_soldier"])
 
 running = True
 while running:
