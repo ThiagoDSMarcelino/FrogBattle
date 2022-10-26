@@ -4,17 +4,19 @@ import pygame
 from settings import *
 
 class Character():
-    def __init__(self, x: int, y: int, animation_list) -> None:
+    def __init__(self, x: int, y: int, mob_dict: dict, mob_name: str) -> None:
         #CREATE HITBOX
-        self.rect = pygame.Rect(0, 0 , 32, 32)
+        self.rect = pygame.Rect(0, 0 , 32 * SCALE, 32 * SCALE)
         self.rect.center = (x, y)
         
         self.action = 2 # 0: Back - 1: Front - 2: Idle - 3: Side
         self.frame_index = 0
-        self.animation_list = animation_list
+        self.animation_list = mob_dict[mob_name]
+        
+        self.name = mob_name
         self.flip = False
         self.update_time = pygame.time.get_ticks()
-        self.image = animation_list[self.action][self.frame_index]
+        self.image = self.animation_list[self.action][self.frame_index]
         
 
     def move(self, dx, dy):
@@ -60,5 +62,9 @@ class Character():
 
     def draw(self, surface: pygame.Surface) -> None:
         flipped_image = pygame.transform.flip(self.image, self.flip, False)
-        surface.blit(flipped_image, self.rect)
+        if self.name == "frog_soldier":
+            # surface.blit(flipped_image, self.rect)
+            surface.blit(flipped_image, (self.rect.x, self.rect.y - OFFSET * SCALE))
+        else:
+            surface.blit(flipped_image, self.rect)
         pygame.draw.rect(surface, RED_BLOCK, self.rect, 1)

@@ -2,6 +2,12 @@ import os
 import pygame
 from settings import * 
 from character import Character
+from weapon import Weapon
+
+def scale_img(image, scale):
+    w = image.get_width()
+    h = image.get_height()
+    return pygame.transform.scale(image, (w * scale, h * scale))
 
 pygame.init()
 
@@ -15,25 +21,24 @@ moving_down = False
 moving_left = False
 moving_right = False
 
-def scale_img(image, scale):
-    w = image.get_width()
-    h = image.get_height()
-    return pygame.transform.scale(image, (w * scale, h * scale))
+gun_image = pygame.image.load(f"{PATH_WEAPONS}/x90.png")
+
 
 character_animations = {}
-
-for character in os.listdir(PATH):
+for character in os.listdir(PATH_CHARACTERS):
     animation_list = []
-    for type in os.listdir(f"{PATH}/{character}"):
+    for type in os.listdir(f"{PATH_CHARACTERS}/{character}"):
         temp_list = []
-        for img in os.listdir(f"{PATH}/{character}/{type}"):
-            img = pygame.image.load(f"{PATH}/{character}/{type}/{img}").convert_alpha()
+        for img in os.listdir(f"{PATH_CHARACTERS}/{character}/{type}"):
+            img = pygame.image.load(f"{PATH_CHARACTERS}/{character}/{type}/{img}").convert_alpha()
             img = scale_img(img, SCALE)
             temp_list.append(img)
         animation_list.append(temp_list)
     character_animations[character] = animation_list
 
-player = Character(100, 100, character_animations["frog_soldier"])
+player = Character(100, 100, character_animations, "frog_soldier")
+
+gun = Weapon(gun_image)
 
 running = True
 while running:
@@ -55,6 +60,9 @@ while running:
     player.move(dx, dy)
     player.update()
     player.draw(screen)
+    
+    gun.update(player)
+    gun.draw(screen)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
