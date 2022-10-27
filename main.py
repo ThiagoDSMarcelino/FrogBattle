@@ -21,7 +21,8 @@ moving_down = False
 moving_left = False
 moving_right = False
 
-gun_image = pygame.image.load(f"{PATH_WEAPONS}/x90.png")
+gun_image = scale_img(pygame.image.load(f"{PATH_WEAPONS}/gun.png"), WEAPON_SCALE)
+bullet_image = scale_img(pygame.image.load(f"{PATH_WEAPONS}/bullet.png"), WEAPON_SCALE)
 
 
 character_animations = {}
@@ -38,7 +39,7 @@ for character in os.listdir(PATH_CHARACTERS):
 
 player = Character(100, 100, character_animations, "frog_soldier")
 
-gun = Weapon(gun_image)
+gun = Weapon(gun_image, bullet_image)
 
 running = True
 while running:
@@ -61,7 +62,7 @@ while running:
     player.update()
     player.draw(screen)
     
-    gun.update(player)
+    bullet = gun.update(player)
     gun.draw(screen)
 
     for event in pygame.event.get():

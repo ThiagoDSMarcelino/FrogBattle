@@ -62,9 +62,5 @@ class Character():
 
     def draw(self, surface: pygame.Surface) -> None:
         flipped_image = pygame.transform.flip(self.image, self.flip, False)
-        if self.name == "frog_soldier":
-            # surface.blit(flipped_image, self.rect)
-            surface.blit(flipped_image, (self.rect.x, self.rect.y - OFFSET * SCALE))
-        else:
-            surface.blit(flipped_image, self.rect)
+        surface.blit(flipped_image, self.rect)
         pygame.draw.rect(surface, RED_BLOCK, self.rect, 1)
