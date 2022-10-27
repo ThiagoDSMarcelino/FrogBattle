@@ -41,6 +41,8 @@ player = Character(100, 100, character_animations, "frog_soldier")
 
 gun = Weapon(gun_image, bullet_image)
 
+bullet_group = pygame.sprite.Group()
+
 running = True
 while running:
     clock.tick(FPS)
@@ -59,11 +61,19 @@ while running:
         dx = SPEED
 
     player.move(dx, dy)
-    player.update()
-    player.draw(screen)
     
+    player.update()
     bullet = gun.update(player)
+    
+    if bullet:
+        bullet_group.add(bullet)
+
+    player.draw(screen)
     gun.draw(screen)
+    bullet_group.draw(screen)
+
+    for bullet in bullet_group:
+        bullet.draw(screen)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
