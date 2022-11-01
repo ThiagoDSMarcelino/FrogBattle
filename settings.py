@@ -20,6 +20,5 @@ PATH_ITEMS = f"{PATH_IMAGES}/items"
 
 RED = (255, 0, 0)
 BG = (40, 25, 25)
-
-pygame.init()
-FONT = pygame.font.Font("assets/fonts/AtariClassic.ttf", 20)
+PANEL = (50, 50, 50)
+WHITE = (255, 255, 255)
