@@ -12,6 +12,7 @@ class Character():
         self.name = mob_name
         self.health = health
         self.alive = True
+        self.score = 0
 
         self.action = 2 # 0: Back - 1: Dying 2: Front - 3: Idle - 4: Side
         self.frame_index = 0

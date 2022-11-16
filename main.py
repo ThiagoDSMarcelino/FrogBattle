@@ -4,7 +4,8 @@ import pygame
 from settings import * 
 from weapon import Weapon
 from character import Character
-from DamageText import DamageText
+from Text import Text
+from item import Item
 
 # Change the iamge size
 def scale_img(image, scale):
@@ -17,9 +18,9 @@ def draw_info():
     pygame.draw.rect(screen, PANEL, (0, 0, SCREEN_SIZE[0], 50))
     pygame.draw.line(screen, WHITE, (0, 50), (SCREEN_SIZE[0], 50))
 
-    heart_full = scale_img(pygame.image.load(f"{PATH_ITEMS}/heart_full.png"), ITEM_SCALE)
-    heart_half = scale_img(pygame.image.load(f"{PATH_ITEMS}/heart_half.png"), ITEM_SCALE)
-    heart_empty = scale_img(pygame.image.load(f"{PATH_ITEMS}/heart_empty.png"), ITEM_SCALE)
+    heart_full = scale_img(pygame.image.load(f"{PATH_ITEMS}/heart_full.png"), HEART_SCALE)
+    heart_half = scale_img(pygame.image.load(f"{PATH_ITEMS}/heart_half.png"), HEART_SCALE)
+    heart_empty = scale_img(pygame.image.load(f"{PATH_ITEMS}/heart_empty.png"), HEART_SCALE)
 
     heart_half_drawn = False
     for i in range(5):
@@ -30,6 +31,8 @@ def draw_info():
             heart_half_drawn = True
         else:
             screen.blit(heart_empty, (10 + i * 50, -10))
+    
+    draw_text(f"X: {player.score}", font, WHITE, (SCREEN_SIZE[0] - (160 + 15 * (int(player.score / 10) + 1)), 15))
 
 # Get all the necessary images for the characters
 def get_character_images():
@@ -46,10 +49,17 @@ def get_character_images():
         character_animations[character] = animation_list
     return character_animations
 
-def get_items_images():
+# Get all coin images to animate the coin
+def get_coin_images():
     coin_images = []
-    for i in range(4):
-        img = scale_img(pygame.image.load(f"{PATH_ITEMS}/coin{i}.png"), ITEM_SCALE)
+    for i in range(5):
+        coin_images.append(scale_img(pygame.image.load(f"{PATH_ITEMS}/coin{i}.png"), ITEM_SCALE))
+    return coin_images
+
+# Draw text
+def draw_text(text, font, text_col, xy):
+    img = font.render(text, True, text_col)
+    screen.blit(img, xy)
 
 # Start basic functions
 pygame.init()
@@ -65,13 +75,15 @@ moving_left = False
 moving_right = False
 
 # Loading images
-character_animations = get_character_images()
+character_animation = get_character_images()
+coin_animation = get_coin_images()
 gun_image = scale_img(pygame.image.load(f"{PATH_WEAPONS}/gun.png"), WEAPON_SCALE)
 bullet_image = scale_img(pygame.image.load(f"{PATH_WEAPONS}/gun_bullet.png"), WEAPON_SCALE)
+red_potion = scale_img(pygame.image.load(f"{PATH_ITEMS}/red_potion.png"), ITEM_SCALE)
 
 # Create objects
-player = Character(100, 100, 50, character_animations, "frog_soldier")
-enemy = Character(200, 300, 100, character_animations, "skull")
+player = Character(100, 100, 90, character_animation, "frog_soldier")
+enemy = Character(200, 300, 100, character_animation, "skull")
 gun = Weapon(gun_image, bullet_image)
 
 # Enemies
@@ -81,6 +93,13 @@ enemy_list.append(enemy)
 # Sprites groups
 damage_text_group = pygame.sprite.Group()
 bullet_group = pygame.sprite.Group()
+item_group = pygame.sprite.Group()
+
+score_coin = Item(SCREEN_SIZE[0] - 200, 25, 0, coin_animation)
+item_group.add(score_coin)
+
+item_group.add(Item(200, 200, 1, [red_potion]))
+item_group.add(Item(400, 400, 0, coin_animation))
 
 running = True
 while running:
@@ -105,7 +124,6 @@ while running:
     
     # Update all elements
     player.update()
-    damage_text_group.update()
     for enemy in enemy_list:
         enemy.update()
     bullet = gun.update(player)
@@ -114,8 +132,10 @@ while running:
     for bullet in bullet_group:
         damage, damage_pos = bullet.update(enemy_list)
         if damage:
-            damage_text = DamageText(damage_pos.centerx, damage_pos.y, damage, RED, font)
+            damage_text = Text(damage_pos.centerx, damage_pos.y, damage, RED, font)
             damage_text_group.add(damage_text)
+    damage_text_group.update()
+    item_group.update(player)
 
     # Draw all elements
     player.draw(screen)
@@ -126,7 +146,9 @@ while running:
         enemy.draw(screen)
     for bullet in bullet_group:
         bullet.draw(screen)
+    item_group.draw(screen)
     draw_info()
+    score_coin.draw(screen)
 
     # Check events
     for event in pygame.event.get():

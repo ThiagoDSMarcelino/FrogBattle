@@ -1,7 +1,7 @@
 import pygame
 from settings import *
 
-class DamageText(pygame.sprite.Sprite):
+class Text(pygame.sprite.Sprite):
     def __init__(self, x: int, y: int, damage: int, color: str, font) -> None:
         pygame.sprite.Sprite.__init__(self)
         self.image = font.render(str(damage), True, color)
