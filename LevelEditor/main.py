@@ -25,7 +25,7 @@ pygame.display.set_caption('Level Editor')
 #define game variables
 ROWS = 150
 TILE_SIZE = 40
-TILE_TYPES = 11
+TILE_TYPES = 14
 COLS = 150
 current_tile = 0
 level = 0
