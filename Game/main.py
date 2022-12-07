@@ -79,7 +79,7 @@ item_images.append(red_potion)
 #load weapon images
 gun_image = scale_img(pygame.image.load("assets/images/weapons/gun.png").convert_alpha(), constants.WEAPON_SCALE)
 bullet_image = scale_img(pygame.image.load("assets/images/weapons/bullet.png").convert_alpha(), constants.WEAPON_SCALE)
-fireball_image = scale_img(pygame.image.load("assets/images/weapons/fireball.png").convert_alpha(), constants.FIREBALL_SCALE)
+dagger_image = scale_img(pygame.image.load("assets/images/weapons/dagger.png").convert_alpha(), constants.DAGGER_SCALE)
 
 #load tilemap images
 tile_list = []
@@ -137,7 +137,7 @@ def reset_level():
   damage_text_group.empty()
   bullet_group.empty()
   item_group.empty()
-  fireball_group.empty()
+  dagger_group.empty()
 
   #create empty tile list
   data = []
@@ -223,29 +223,31 @@ enemy_list = world.character_list
 damage_text_group = pygame.sprite.Group()
 bullet_group = pygame.sprite.Group()
 item_group = pygame.sprite.Group()
-fireball_group = pygame.sprite.Group()
+dagger_group = pygame.sprite.Group()
 
 score_coin = Item(constants.SCREEN_WIDTH - 115, 23, 0, coin_images, True)
 item_group.add(score_coin)
 #add the items from the level data
 for item in world.item_list:
   item_group.add(item)
-
+\
 
 #create screen fades
 intro_fade = ScreenFade(1, constants.BLACK, 4)
 death_fade = ScreenFade(2, constants.PINK, 4)
 
 #create button
-start_button = Button(constants.SCREEN_WIDTH // 2 - 145, constants.SCREEN_HEIGHT // 2 - 150, start_img)
-exit_button = Button(constants.SCREEN_WIDTH // 2 - 110, constants.SCREEN_HEIGHT // 2 + 50, exit_img)
-restart_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGHT // 2 - 50, restart_img)
-resume_button = Button(constants.SCREEN_WIDTH // 2 - 175, constants.SCREEN_HEIGHT // 2 - 150, resume_img)
+start_button = Button(constants.SCREEN_WIDTH // 2 - 32 * constants.BUTTON_SCALE // 2, constants.SCREEN_HEIGHT // 2 - 32 * constants.BUTTON_SCALE // 2 - 50, start_img)
+exit_button = Button(constants.SCREEN_WIDTH // 2 - 32 * constants.BUTTON_SCALE // 2, constants.SCREEN_HEIGHT // 2 - 32 * constants.BUTTON_SCALE // 2 + 200, exit_img)
+restart_button = Button(constants.SCREEN_WIDTH // 2 - 32 * constants.BUTTON_SCALE // 2, constants.SCREEN_HEIGHT // 2 - 32 * constants.BUTTON_SCALE // 2, restart_img)
+resume_button = Button(constants.SCREEN_WIDTH // 2 - 32 * constants.BUTTON_SCALE // 2, constants.SCREEN_HEIGHT // 2 - 32 * constants.BUTTON_SCALE // 2 - 50, resume_img)
+
+caveira = scale_img(pygame.image.load("assets/images/buttons/sprite_4.png").convert_alpha(), constants.BUTTON_SCALE)
+caveira2 = scale_img(pygame.image.load("assets/images/buttons/sprite_5.png").convert_alpha(), constants.BUTTON_SCALE)
 
 #main game loop
 run = True
 while run:
-
   #control frame rate
   clock.tick(constants.FPS)
 
@@ -259,6 +261,8 @@ while run:
   else:
     if pause_game == True:
       screen.fill(constants.MENU_BG)
+      screen.blit(caveira, (0,0))
+      screen.blit(caveira2, (200,0))
       if resume_button.draw(screen):
         pause_game = False
       if exit_button.draw(screen):
@@ -279,17 +283,20 @@ while run:
         if moving_down == True:
           dy = constants.SPEED
 
-        #move player
-        screen_scroll, level_complete = player.move(dx, dy, world.obstacle_tiles, world.exit_tile)
-
         #update all objects
         world.update(screen_scroll)
+        fase_completa = True
         for enemy in enemy_list:
-          fireball = enemy.ai(player, world.obstacle_tiles, screen_scroll, fireball_image)
-          if fireball:
-            fireball_group.add(fireball)
+          dagger = enemy.ai(player, world.obstacle_tiles, screen_scroll, dagger_image)
+          if dagger:
+            dagger_group.add(dagger)
           if enemy.alive:
             enemy.update()
+            fase_completa = False
+        
+        #move player
+        screen_scroll, level_complete = player.move(dx, dy, world.obstacle_tiles, fase_completa, world.exit_tile)
+        
         player.update()
         bullet = gun.update(player)
         if bullet:
@@ -302,7 +309,7 @@ while run:
             damage_text_group.add(damage_text)
             hit_fx.play()
         damage_text_group.update()
-        fireball_group.update(screen_scroll, player)
+        dagger_group.update(screen_scroll, player)
         item_group.update(screen_scroll, player, coin_fx, heal_fx)
 
       #draw player on screen
@@ -313,8 +320,8 @@ while run:
       gun.draw(screen)
       for bullet in bullet_group:
         bullet.draw(screen)
-      for fireball in fireball_group:
-        fireball.draw(screen)
+      for dagger in dagger_group:
+        dagger.draw(screen)
       damage_text_group.draw(screen)
       item_group.draw(screen)
       draw_info()

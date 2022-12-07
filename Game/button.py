@@ -16,7 +16,6 @@ class Button():
     if self.rect.collidepoint(pos):
       if pygame.mouse.get_pressed()[0]:
         action = True
-
     surface.blit(self.image, self.rect)
 
     return action

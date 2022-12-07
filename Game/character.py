@@ -25,7 +25,7 @@ class Character():
     self.rect = pygame.Rect(0, 0, constants.TILE_SIZE * size, constants.TILE_SIZE * size)
     self.rect.center = (x, y)
 
-  def move(self, dx, dy, obstacle_tiles, exit_tile = None):
+  def move(self, dx, dy, obstacle_tiles, fase_completa, exit_tile = None):
     screen_scroll = [0, 0]
     level_complete = False
     self.running = False
@@ -70,7 +70,7 @@ class Character():
       if exit_tile[1].colliderect(self.rect):
         #ensure player is close to the center of the exit ladder
         exit_dist = math.sqrt(((self.rect.centerx - exit_tile[1].centerx) ** 2) + ((self.rect.centery - exit_tile[1].centery) ** 2))
-        if exit_dist < 20:
+        if exit_dist < 20 and fase_completa:
           level_complete = True
 
       #update scroll based on player position
@@ -93,12 +93,12 @@ class Character():
     return screen_scroll, level_complete
 
 
-  def ai(self, player, obstacle_tiles, screen_scroll, fireball_image):
+  def ai(self, player, obstacle_tiles, screen_scroll, dagger_image):
     clipped_line = ()
     stun_cooldown = 100
     ai_dx = 0
     ai_dy = 0
-    fireball = None
+    dagger = None
 
     #reposition the mobs based on screen scroll
     self.rect.x += screen_scroll[0]
@@ -126,18 +126,18 @@ class Character():
     if self.alive:
       if not self.stunned:
         #move towards player
-        self.move(ai_dx, ai_dy, obstacle_tiles)
+        self.move(ai_dx, ai_dy, obstacle_tiles, False)
         #attack player
         if dist < constants.ATTACK_RANGE and player.hit == False:
           player.health -= 10
           player.hit = True
           player.last_hit = pygame.time.get_ticks()
-        #boss enemies shoot fireballs
-        fireball_cooldown = 700
+        #boss enemies shoot daggers
+        dagger_cooldown = 700
         if self.boss:
           if dist < 500:
-            if pygame.time.get_ticks() - self.last_attack >= fireball_cooldown:
-              fireball = weapon.Fireball(fireball_image, self.rect.centerx, self.rect.centery, player.rect.centerx, player.rect.centery)
+            if pygame.time.get_ticks() - self.last_attack >= dagger_cooldown:
+              dagger = weapon.Dagger(dagger_image, self.rect.centerx, self.rect.centery, player.rect.centerx, player.rect.centery)
               self.last_attack = pygame.time.get_ticks()
 
 
@@ -152,7 +152,7 @@ class Character():
       if (pygame.time.get_ticks() - self.last_hit > stun_cooldown):
         self.stunned = False
 
-    return fireball
+    return dagger
 
   def update(self):
     #check if character has died
@@ -197,6 +197,6 @@ class Character():
   def draw(self, surface):
     flipped_image = pygame.transform.flip(self.image, self.flip, False)
     if self.char_type == 0:
-      surface.blit(flipped_image, (self.rect.x, self.rect.y - constants.SCALE * constants.OFFSET))
+      surface.blit(flipped_image, (self.rect.x, self.rect.y - constants.SCALE))
     else:
       surface.blit(flipped_image, self.rect)

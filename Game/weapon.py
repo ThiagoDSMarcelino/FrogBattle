@@ -88,7 +88,7 @@ class Arrow(pygame.sprite.Sprite):
     surface.blit(self.image, ((self.rect.centerx - int(self.image.get_width()/2)), self.rect.centery - int(self.image.get_height()/2)))
 
 
-class Fireball(pygame.sprite.Sprite):
+class Dagger(pygame.sprite.Sprite):
   def __init__(self, image, x, y, target_x, target_y):
     pygame.sprite.Sprite.__init__(self)
     self.original_image = image
@@ -99,16 +99,15 @@ class Fireball(pygame.sprite.Sprite):
     self.rect = self.image.get_rect()
     self.rect.center = (x, y)
     #calculate the horizontal and vertical speeds based on the angle
-    self.dx = math.cos(math.radians(self.angle)) * constants.FIREBALL_SPEED
-    self.dy = -(math.sin(math.radians(self.angle)) * constants.FIREBALL_SPEED)#-ve because pygame y coordiate increases down the screen
-
+    self.dx = math.cos(math.radians(self.angle)) * constants.DAGGER_SPEED
+    self.dy = -(math.sin(math.radians(self.angle)) * constants.DAGGER_SPEED)#-ve because pygame y coordiate increases down the screen
 
   def update(self, screen_scroll, player):
     #reposition based on speed
     self.rect.x += screen_scroll[0] + self.dx
     self.rect.y += screen_scroll[1] + self.dy
-
-    #check if fireball has gone off screen
+    self.image = pygame.transform.rotate(self.image, 90)
+    #check if dagger has gone off screen
     if self.rect.right < 0 or self.rect.left > constants.SCREEN_WIDTH or self.rect.bottom < 0 or self.rect.top > constants.SCREEN_HEIGHT:
       self.kill()
 
