@@ -18,7 +18,7 @@ pygame.display.set_caption("Frog Battle")
 clock = pygame.time.Clock()
 
 #define game variables
-level = 1
+level = 6
 start_game = False
 pause_game = False
 start_intro = False
@@ -237,13 +237,13 @@ intro_fade = ScreenFade(1, constants.BLACK, 4)
 death_fade = ScreenFade(2, constants.PINK, 4)
 
 #create button
-start_button = Button(constants.SCREEN_WIDTH // 2 - 32 * constants.BUTTON_SCALE // 2, constants.SCREEN_HEIGHT // 2 - 32 * constants.BUTTON_SCALE // 2 - 50, start_img)
-exit_button = Button(constants.SCREEN_WIDTH // 2 - 32 * constants.BUTTON_SCALE // 2, constants.SCREEN_HEIGHT // 2 - 32 * constants.BUTTON_SCALE // 2 + 200, exit_img)
-restart_button = Button(constants.SCREEN_WIDTH // 2 - 32 * constants.BUTTON_SCALE // 2, constants.SCREEN_HEIGHT // 2 - 32 * constants.BUTTON_SCALE // 2, restart_img)
-resume_button = Button(constants.SCREEN_WIDTH // 2 - 32 * constants.BUTTON_SCALE // 2, constants.SCREEN_HEIGHT // 2 - 32 * constants.BUTTON_SCALE // 2 - 50, resume_img)
+start_button = Button(constants.SCREEN_WIDTH // 2 - 64 * constants.BUTTON_SCALE // 2 - 300, constants.SCREEN_HEIGHT // 2 - 64 * constants.BUTTON_SCALE // 2, start_img)
+exit_button = Button(constants.SCREEN_WIDTH // 2 - 64 * constants.BUTTON_SCALE // 2 + 300, constants.SCREEN_HEIGHT // 2 - 64 * constants.BUTTON_SCALE // 2, exit_img)
+restart_button = Button(constants.SCREEN_WIDTH // 2 - 64 * constants.BUTTON_SCALE // 2, constants.SCREEN_HEIGHT // 2 - 64 * constants.BUTTON_SCALE // 2, restart_img)
+resume_button = Button(constants.SCREEN_WIDTH // 2 - 64 * constants.BUTTON_SCALE // 2, constants.SCREEN_HEIGHT // 2 - 64 * constants.BUTTON_SCALE // 2 - 50, resume_img)
 
-caveira = scale_img(pygame.image.load("assets/images/buttons/sprite_4.png").convert_alpha(), constants.BUTTON_SCALE)
-caveira2 = scale_img(pygame.image.load("assets/images/buttons/sprite_5.png").convert_alpha(), constants.BUTTON_SCALE)
+background_start = scale_img(pygame.image.load("assets/images/buttons/background_start.png").convert_alpha(), constants.BUTTON_SCALE)
+backgound_exit = scale_img(pygame.image.load("assets/images/buttons/backgound_exit.png").convert_alpha(), constants.BUTTON_SCALE)
 
 #main game loop
 run = True
@@ -251,8 +251,10 @@ while run:
   #control frame rate
   clock.tick(constants.FPS)
 
-  if start_game == False:
+  if not start_game:
     screen.fill(constants.MENU_BG)
+    screen.blit(background_start, (constants.SCREEN_WIDTH // 2 - 64 * constants.BUTTON_SCALE // 2 - 300, constants.SCREEN_HEIGHT // 2 - 64 * constants.BUTTON_SCALE // 2))
+    screen.blit(backgound_exit, (constants.SCREEN_WIDTH // 2 - 64 * constants.BUTTON_SCALE // 2 + 300, constants.SCREEN_HEIGHT // 2 - 64 * constants.BUTTON_SCALE // 2))
     if start_button.draw(screen):
       start_game = True
       start_intro = True
@@ -261,8 +263,7 @@ while run:
   else:
     if pause_game == True:
       screen.fill(constants.MENU_BG)
-      screen.blit(caveira, (0,0))
-      screen.blit(caveira2, (200,0))
+      
       if resume_button.draw(screen):
         pause_game = False
       if exit_button.draw(screen):
@@ -309,7 +310,7 @@ while run:
             damage_text_group.add(damage_text)
             hit_fx.play()
         damage_text_group.update()
-        dagger_group.update(screen_scroll, player)
+        dagger_group.update(screen_scroll, world.obstacle_tiles, player)
         item_group.update(screen_scroll, player, coin_fx, heal_fx)
 
       #draw player on screen
@@ -354,13 +355,13 @@ while run:
 
 
       #show intro
-      if start_intro == True:
+      if start_intro:
         if intro_fade.fade():
           start_intro = False
           intro_fade.fade_counter = 0
 
       #show death screen
-      if player.alive == False:
+      if not player.alive:
         if death_fade.fade():
           if restart_button.draw(screen):
             death_fade.fade_counter = 0

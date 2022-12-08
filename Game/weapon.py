@@ -102,12 +102,17 @@ class Dagger(pygame.sprite.Sprite):
     self.dx = math.cos(math.radians(self.angle)) * constants.DAGGER_SPEED
     self.dy = -(math.sin(math.radians(self.angle)) * constants.DAGGER_SPEED)#-ve because pygame y coordiate increases down the screen
 
-  def update(self, screen_scroll, player):
+  def update(self, screen_scroll, obstacle_tiles, player):
     #reposition based on speed
     self.rect.x += screen_scroll[0] + self.dx
     self.rect.y += screen_scroll[1] + self.dy
     self.image = pygame.transform.rotate(self.image, 90)
     #check if dagger has gone off screen
+    
+    for obstacle in obstacle_tiles:
+      if obstacle[1].colliderect(self.rect):
+        self.kill()
+    
     if self.rect.right < 0 or self.rect.left > constants.SCREEN_WIDTH or self.rect.bottom < 0 or self.rect.top > constants.SCREEN_HEIGHT:
       self.kill()
 

@@ -37,15 +37,15 @@ class World():
           self.item_list.append(potion)
           tile_data[0] = tile_list[0]
         elif tile == 13:
-          player = Character(image_x, image_y, 100, mob_animations, 0, False, 1)
+          player = Character(image_x, image_y, 100, mob_animations, 0, False)
           self.player = player
           tile_data[0] = tile_list[0]
         elif tile == 12:
-          enemy = Character(image_x, image_y, 100, mob_animations, 1, False, 1)
+          enemy = Character(image_x, image_y, 100, mob_animations, 1, False)
           self.character_list.append(enemy)
           tile_data[0] = tile_list[0]
         elif tile == 11:
-          enemy = Character(image_x, image_y, 100, mob_animations, 2, True, 2)
+          enemy = Character(image_x, image_y, 100, mob_animations, 2, True)
           self.character_list.append(enemy)
           tile_data[0] = tile_list[0]
           

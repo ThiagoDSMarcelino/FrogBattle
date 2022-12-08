@@ -4,7 +4,7 @@ import weapon
 import constants
 
 class Character():
-  def __init__(self, x, y, health, mob_animations, char_type, boss, size):
+  def __init__(self, x, y, health, mob_animations, char_type, boss):
     self.char_type = char_type
     self.boss = boss
     self.score = 0
@@ -22,7 +22,7 @@ class Character():
     self.stunned = False
 
     self.image = self.animation_list[self.action][self.frame_index]
-    self.rect = pygame.Rect(0, 0, constants.TILE_SIZE * size, constants.TILE_SIZE * size)
+    self.rect = pygame.Rect(0, 0, constants.TILE_SIZE, constants.TILE_SIZE)
     self.rect.center = (x, y)
 
   def move(self, dx, dy, obstacle_tiles, fase_completa, exit_tile = None):
@@ -67,11 +67,12 @@ class Character():
     #logic only applicable to player
     if self.char_type == 0:
       #check collision with exit ladder
-      if exit_tile[1].colliderect(self.rect):
-        #ensure player is close to the center of the exit ladder
-        exit_dist = math.sqrt(((self.rect.centerx - exit_tile[1].centerx) ** 2) + ((self.rect.centery - exit_tile[1].centery) ** 2))
-        if exit_dist < 20 and fase_completa:
-          level_complete = True
+      if exit_tile != None:
+        if exit_tile[1].colliderect(self.rect):
+          #ensure player is close to the center of the exit ladder
+          exit_dist = math.sqrt(((self.rect.centerx - exit_tile[1].centerx) ** 2) + ((self.rect.centery - exit_tile[1].centery) ** 2))
+          if exit_dist < 20 and fase_completa:
+            level_complete = True
 
       #update scroll based on player position
       #move camera left and right
@@ -197,6 +198,6 @@ class Character():
   def draw(self, surface):
     flipped_image = pygame.transform.flip(self.image, self.flip, False)
     if self.char_type == 0:
-      surface.blit(flipped_image, (self.rect.x, self.rect.y - constants.SCALE))
+      surface.blit(flipped_image, (self.rect.x,  self.rect.y ))
     else:
       surface.blit(flipped_image, self.rect)
