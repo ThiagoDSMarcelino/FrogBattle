@@ -18,7 +18,7 @@ pygame.display.set_caption("Frog Battle")
 clock = pygame.time.Clock()
 
 #define game variables
-level = 6
+level = 1
 start_game = False
 pause_game = False
 start_intro = False
@@ -45,7 +45,7 @@ pygame.mixer.music.set_volume(0.7)
 pygame.mixer.music.play(-1, 0.0, 5000)
 shot_fx = pygame.mixer.Sound("assets/audio/shot.mp3")
 shot_fx.set_volume(0.3)
-hit_fx = pygame.mixer.Sound("assets/audio/arrow_hit.wav")
+hit_fx = pygame.mixer.Sound("assets/audio/bullet_hit.wav")
 hit_fx.set_volume(0.5)
 coin_fx = pygame.mixer.Sound("assets/audio/coin.wav")
 coin_fx.set_volume(0.5)
@@ -240,8 +240,10 @@ death_fade = ScreenFade(2, constants.PINK, 4)
 start_button = Button(constants.SCREEN_WIDTH // 2 - 64 * constants.BUTTON_SCALE // 2 - 300, constants.SCREEN_HEIGHT // 2 - 64 * constants.BUTTON_SCALE // 2, start_img)
 exit_button = Button(constants.SCREEN_WIDTH // 2 - 64 * constants.BUTTON_SCALE // 2 + 300, constants.SCREEN_HEIGHT // 2 - 64 * constants.BUTTON_SCALE // 2, exit_img)
 restart_button = Button(constants.SCREEN_WIDTH // 2 - 64 * constants.BUTTON_SCALE // 2, constants.SCREEN_HEIGHT // 2 - 64 * constants.BUTTON_SCALE // 2, restart_img)
-resume_button = Button(constants.SCREEN_WIDTH // 2 - 64 * constants.BUTTON_SCALE // 2, constants.SCREEN_HEIGHT // 2 - 64 * constants.BUTTON_SCALE // 2 - 50, resume_img)
+resume_button = Button(constants.SCREEN_WIDTH // 2 - 64 * constants.BUTTON_SCALE // 2 - 300, constants.SCREEN_HEIGHT // 2 - 64 * constants.BUTTON_SCALE // 2 + 200, resume_img)
 
+background_restart = scale_img(pygame.image.load("assets/images/buttons/background_restart.png").convert_alpha(), constants.BUTTON_SCALE)
+background_resume = scale_img(pygame.image.load("assets/images/buttons/background_resume.png").convert_alpha(), constants.BUTTON_SCALE)
 background_start = scale_img(pygame.image.load("assets/images/buttons/background_start.png").convert_alpha(), constants.BUTTON_SCALE)
 backgound_exit = scale_img(pygame.image.load("assets/images/buttons/backgound_exit.png").convert_alpha(), constants.BUTTON_SCALE)
 
@@ -263,7 +265,8 @@ while run:
   else:
     if pause_game == True:
       screen.fill(constants.MENU_BG)
-      
+      screen.blit(backgound_exit, (constants.SCREEN_WIDTH // 2 - 64 * constants.BUTTON_SCALE // 2 + 300, constants.SCREEN_HEIGHT // 2 - 64 * constants.BUTTON_SCALE // 2))
+      screen.blit(background_resume, (constants.SCREEN_WIDTH // 2 - 64 * constants.BUTTON_SCALE // 2 - 300, constants.SCREEN_HEIGHT // 2 - 64 * constants.BUTTON_SCALE // 2))
       if resume_button.draw(screen):
         pause_game = False
       if exit_button.draw(screen):
@@ -329,7 +332,7 @@ while run:
       score_coin.draw(screen)
 
       #check level complete
-      if level_complete == True:
+      if level_complete:
         start_intro = True
         level += 1
         world_data = reset_level()
@@ -363,6 +366,7 @@ while run:
       #show death screen
       if not player.alive:
         if death_fade.fade():
+          screen.blit(background_restart, (constants.SCREEN_WIDTH // 2 - 64 * constants.BUTTON_SCALE // 2, constants.SCREEN_HEIGHT // 2 - 64 * constants.BUTTON_SCALE // 2))
           if restart_button.draw(screen):
             death_fade.fade_counter = 0
             start_intro = True
